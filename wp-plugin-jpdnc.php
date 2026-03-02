@@ -16,7 +16,7 @@
  * Plugin URI:        https://jpdnc.org
  * Description:       A custom WordPress plugin for JPDNC.
  * Version:           1.0.0
- * Author:            JPDNC
+ * Author:            Phil O'Sullivan <phil.osullivan@gmail.com>
  * Author URI:        https://jpdnc.org
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
