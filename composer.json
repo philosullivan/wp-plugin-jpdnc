@@ -1,0 +1,15 @@
+{
+    "name": "philosullivan/wp-plugin-jpdnc",
+    "autoload": {
+        "psr-4": {
+            "Philosullivan\\WpPluginJpdnc\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Phil O'Sullivan",
+            "email": "phil.osullivan@gmail.com"
+        }
+    ],
+    "require": {}
+}
