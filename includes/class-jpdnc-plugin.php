@@ -175,7 +175,7 @@ class Jpdnc_Plugin {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
 		// custom fix.
-		$this->loader->add( 'init', $plugin_public, 'fix_ninja_forms_loading' );
+		$this->loader->add_action( 'init', $this, 'fix_ninja_forms_loading' );
 
 	}
 
