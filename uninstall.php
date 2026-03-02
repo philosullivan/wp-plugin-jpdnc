@@ -3,7 +3,7 @@
 /**
  * Fired when the plugin is uninstalled.
  *
- * @link       https://jpdnc.com
+ * @link       https://jpdnc.org
  * @since      1.0.0
  *
  * @package    Jpdnc_Plugin

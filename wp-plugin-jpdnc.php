@@ -7,17 +7,17 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              https://jpdnc.com
+ * @link              https://jpdnc.org
  * @since             1.0.0
  * @package           Jpdnc_Plugin
  *
  * @wordpress-plugin
  * Plugin Name:       JPDNC Plugin
- * Plugin URI:        https://jpdnc.com
+ * Plugin URI:        https://jpdnc.org
  * Description:       A custom WordPress plugin for JPDNC.
  * Version:           1.0.0
  * Author:            JPDNC
- * Author URI:        https://jpdnc.com
+ * Author URI:        https://jpdnc.org
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       jpdnc-plugin

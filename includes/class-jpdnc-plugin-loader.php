@@ -3,7 +3,7 @@
 /**
  * Register all actions and filters for the plugin
  *
- * @link       https://jpdnc.com
+ * @link       https://jpdnc.org
  * @since      1.0.0
  *
  * @package    Jpdnc_Plugin
@@ -19,7 +19,7 @@
  *
  * @package    Jpdnc_Plugin
  * @subpackage Jpdnc_Plugin/includes
- * @author     JPDNC <https://jpdnc.com>
+ * @author     JPDNC <https://jpdnc.org>
  */
 class Jpdnc_Plugin_Loader {
 
