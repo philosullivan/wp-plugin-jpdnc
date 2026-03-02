@@ -12,7 +12,7 @@
  * @package           Jpdnc_Plugin
  *
  * @wordpress-plugin
- * Plugin Name:       JPDNC Plugin
+ * Plugin Name:       JPDNC Redesign Compatibility Plugin
  * Plugin URI:        https://jpdnc.org
  * Description:       A custom WordPress plugin for JPDNC.
  * Version:           1.0.0

@@ -1,4 +1,4 @@
-=== JPDNC Plugin ===
+=== JPDNC Redesign Compatibility Plugin ===
 Contributors: JPDNC
 Stable tag: 1.0.0
 Requires at least: 5.0
