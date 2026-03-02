@@ -85,7 +85,7 @@ class Jpdnc_Plugin_Loader {
 	 * A utility function that is used to register the actions and filters into a single collection.
 	 *
 	 * @since    1.0.0
-	 * @access   private
+	 * @access   public
 	 * @param    array                $hooks            The collection of hooks that is being registered (that is, actions or filters).
 	 * @param    string               $hook             The name of the WordPress filter that is being registered.
 	 * @param    object               $component        A reference to the instance of the object on which the callback is defined.
@@ -94,7 +94,7 @@ class Jpdnc_Plugin_Loader {
 	 * @param    int                  $accepted_args    The number of arguments that should be passed to the $callback.
 	 * @return   array                                  The collection of hooks that is being registered.
 	 */
-	private function add( $hooks, $hook, $component, $callback, $priority, $accepted_args ) {
+	public function add( $hooks, $hook, $component, $callback, $priority, $accepted_args ) {
 
 		$hooks[] = array(
 			'hook'          => $hook,

@@ -76,6 +76,11 @@ class Jpdnc_Plugin {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 
+		// Add this block here:
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			$this->define_cli_hooks();
+		}
+
 	}
 
 	/**
@@ -169,6 +174,9 @@ class Jpdnc_Plugin {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
+		// custom fix.
+		$this->loader->add( 'init', $plugin_public, 'fix_ninja_forms_loading' );
+
 	}
 
 	/**
@@ -211,4 +219,45 @@ class Jpdnc_Plugin {
 		return $this->version;
 	}
 
+/**
+	 * Delays Ninja Forms translation loading.
+	 */
+	public function fix_ninja_forms_loading() {
+		if ( function_exists( 'Ninja_Forms' ) ) {
+			load_plugin_textdomain( 'ninja-forms' );
+		}
+	}
+
+	/**
+	 * Registers custom JPNDC commands with WP-CLI.
+	 *
+	 * @return void
+	 */
+	public function register_cli_commands() {
+		WP_CLI::add_command( 'jpndc fix-forms', [ $this, 'cli_fix_forms' ] );
+	}
+
+	/**
+	 * Manually triggers the Ninja Forms textdomain load via CLI.
+	 *
+	 * @param array $args       Command arguments.
+	 * @param array $assoc_args Command flags.
+	 * @return void
+	 */
+	public function cli_fix_forms( $args, $assoc_args ) {
+		if ( function_exists( 'Ninja_Forms' ) ) {
+			load_plugin_textdomain( 'ninja-forms' );
+			WP_CLI::success( 'Ninja Forms textdomain loaded manually.' );
+		} else {
+			WP_CLI::error( 'Ninja Forms is not active on this site.' );
+		}
+	}
+
+	/**
+	 * Register the WP-CLI commands.
+	 */
+	private function define_cli_hooks() {
+		// Register the command directly.
+		\WP_CLI::add_command( 'jpndc fix-forms', [ $this, 'cli_fix_forms' ] );
+	}
 }
