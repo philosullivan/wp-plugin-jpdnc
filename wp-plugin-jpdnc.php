@@ -76,4 +76,19 @@ function run_jpdnc_plugin() {
 	$plugin->run();
 
 }
+
+/**
+ * Disables the comments endpoint in the REST API.
+ */
+add_filter( 'rest_endpoints', function( $endpoints ) {
+	if ( isset( $endpoints['/wp/v2/comments'] ) ) {
+		unset( $endpoints['/wp/v2/comments'] );
+	}
+	if ( isset( $endpoints['/wp/v2/comments/(?P<id>[\d]+)'] ) ) {
+		unset( $endpoints['/wp/v2/comments/(?P<id>[\d]+)'] );
+	}
+	return $endpoints;
+} );
+
+
 run_jpdnc_plugin();

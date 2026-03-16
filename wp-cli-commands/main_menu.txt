@@ -1,0 +1,54 @@
+Main Nav:
+wp menu list
+wp menu item list jpndc-main-menu
+
+Parent Menu Items:
+About
+Our Work
+Get Involved 
+Events
+Donate
+
+wp menu item add-post jpndc-main-menu 1036 --title="New Page Title"
+
+About
+wp menu item add-post jpndc-main-menu 1036 --title="Who We Are" --parent-id=914
+wp menu item add-post jpndc-main-menu 1036 --title="Mission, Vision, Values" --parent-id=914
+wp menu item add-post jpndc-main-menu 1036 --title="History" --parent-id=914
+wp menu item add-post jpndc-main-menu 1036 --title="Stronger Together - JPNDC Stories" --parent-id=914
+wp menu item add-post jpndc-main-menu 1036 --title="Board & Staff" --parent-id=914
+    Submenu -> wp menu item add-post jpndc-main-menu 1036 --title="JPNDC Board And Resources" --parent-id=1044
+wp menu item add-post jpndc-main-menu 1036 --title="The Brewery" --parent-id=914
+wp menu item add-post jpndc-main-menu 1036 --title="Join Our Team" --parent-id=914
+
+Our Work
+wp menu item add-post jpndc-main-menu 1036 --title="Affordable Housing" --parent-id=17
+    Submenu -> wp menu item add-post jpndc-main-menu 1036 --title="Real Estate Portfolio" --parent-id=1051
+    Submenu -> wp menu item add-post jpndc-main-menu 1036 --title="Real Estate Portfolio: In the Pipeline" --parent-id=1051
+wp menu item add-post jpndc-main-menu 1036 --title="Early Education Services" --parent-id=17
+wp menu item add-custom jpndc-main-menu "Economic Prosperity Services" "#" --parent-id=17
+    Submenu -> wp menu item add-post jpndc-main-menu 1036 --title="Family Mobility Services" --parent-id=1055
+    Submenu -> wp menu item add-post jpndc-main-menu 1036 --title="Resident Advocacy, Mobility, Wellness Pathways" --parent-id=1055
+wp menu item add-post jpndc-main-menu 1036 --title="Community Organizing" --parent-id=17
+wp menu item add-post jpndc-main-menu 1036 --title="Small Business Services" --parent-id=17
+wp menu item add-post jpndc-main-menu 1036 --title="Neighborhood Retail" --parent-id=17
+
+Get Involved
+wp menu item add-post jpndc-main-menu 1036 --title="Get Involved" --parent-id=16
+wp menu item add-post jpndc-main-menu 1036 --title="JPNDC Newsletter Signup" --parent-id=16
+wp menu item add-custom jpndc-main-menu "Ways To Give" "#" --parent-id=16
+    Submenu -> wp menu item add-post jpndc-main-menu 1036 --title="Donate Now" --parent-id=1063
+    Submenu -> wp menu item add-post jpndc-main-menu 1036 --title="Community Investment Tax Credit" --parent-id=1063
+
+Events
+wp post meta update 15 _menu_item_object_id 1036
+wp post meta update 15 _menu_item_type "post_type"
+
+Donate
+wp post meta update 14 _menu_item_target "_blank"
+wp post meta update 14 _menu_item_xfn "nofollow noopener"
+wp menu item update 14 --classes="fusion-menu-item-button"
+wp menu item update 14 --url="https://giving.classy.org/campaign/748362/donate"
+wp post meta update 14 _menu_item_type "custom"
+wp post meta update 14 _menu_item_url "https://giving.classy.org/campaign/748362/donate"
+
