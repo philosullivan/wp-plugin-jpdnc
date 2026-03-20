@@ -100,4 +100,52 @@ class Jpdnc_Plugin_Admin {
 
 	}
 
+	/**
+	 * Disable support for comments and trackbacks in post types.
+	 *
+	 * @since    1.0.0
+	 */
+	public function disable_comments_post_types_support() {
+		$post_types = get_post_types();
+		foreach ( $post_types as $post_type ) {
+			if ( post_type_supports( $post_type, 'comments' ) ) {
+				remove_post_type_support( $post_type, 'comments' );
+				remove_post_type_support( $post_type, 'trackbacks' );
+			}
+		}
+	}
+
+	/**
+	 * Remove the comments item from the admin menu.
+	 *
+	 * @since    1.0.0
+	 */
+	public function disable_comments_admin_menu() {
+		remove_menu_page( 'edit-comments.php' );
+	}
+
+	/**
+	 * Redirect any user trying to access the comments page.
+	 *
+	 * @since    1.0.0
+	 */
+	public function disable_comments_admin_menu_redirect() {
+		global $pagenow;
+		if ( 'edit-comments.php' === $pagenow ) {
+			wp_safe_redirect( admin_url() );
+			exit;
+		}
+	}
+
+	/**
+	 * Remove the comments link from the admin bar.
+	 *
+	 * @since    1.0.0
+	 */
+	public function disable_comments_admin_bar() {
+		if ( is_admin_bar_showing() ) {
+			remove_action( 'admin_bar_menu', 'wp_admin_bar_comments_menu', 60 );
+		}
+	}
+
 }

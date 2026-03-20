@@ -30,7 +30,21 @@ class Jpdnc_Plugin_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
+		global $wpdb;
 
+		// 1. Disable comments and pings on future posts.
+		update_option( 'default_comment_status', 'closed' );
+		update_option( 'default_ping_status', 'closed' );
+
+		// 2. Close comments on all existing posts.
+		$wpdb->query( "UPDATE {$wpdb->posts} SET comment_status = 'closed', ping_status = 'closed'" );
+
+		// 3. Delete all existing comments and comment meta.
+		$wpdb->query( "DELETE FROM {$wpdb->comments}" );
+		$wpdb->query( "DELETE FROM {$wpdb->commentmeta}" );
+
+		// 4. Reset comment counts on all posts.
+		$wpdb->query( "UPDATE {$wpdb->posts} SET comment_count = 0" );
 	}
 
 }

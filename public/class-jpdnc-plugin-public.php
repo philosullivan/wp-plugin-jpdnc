@@ -51,7 +51,6 @@ class Jpdnc_Plugin_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-
 	}
 
 	/**
@@ -98,6 +97,44 @@ class Jpdnc_Plugin_Public {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/jpdnc-plugin-public.js', array( 'jquery' ), $this->version, false );
 
+	}
+
+	/**
+	 * Filter to close comments.
+	 *
+	 * @since    1.0.0
+	 * @return   boolean   False to close comments.
+	 */
+	public function filter_comments_closed() {
+		return false;
+	}
+
+	/**
+	 * Filter to return an empty array of comments.
+	 *
+	 * @since    1.0.0
+	 * @param    array     $comments   Existing comments.
+	 * @return   array     Empty array.
+	 */
+	public function filter_empty_comments_array( $comments ) {
+		return array();
+	}
+
+	/**
+	 * Disable the comments REST API endpoint.
+	 *
+	 * @since    1.0.0
+	 * @param    array     $endpoints  REST API endpoints.
+	 * @return   array     Filtered endpoints.
+	 */
+	public function disable_comments_rest_api( $endpoints ) {
+		if ( isset( $endpoints['/wp/v2/comments'] ) ) {
+			unset( $endpoints['/wp/v2/comments'] );
+		}
+		if ( isset( $endpoints['/wp/v2/comments/(?P<id>[\d]+)'] ) ) {
+			unset( $endpoints['/wp/v2/comments/(?P<id>[\d]+)'] );
+		}
+		return $endpoints;
 	}
 
 }

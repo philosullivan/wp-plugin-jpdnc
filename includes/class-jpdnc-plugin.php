@@ -158,6 +158,12 @@ class Jpdnc_Plugin {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		// Disable comments in admin.
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'disable_comments_post_types_support' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'disable_comments_admin_menu' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'disable_comments_admin_menu_redirect' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'disable_comments_admin_bar' );
+
 	}
 
 	/**
@@ -176,6 +182,12 @@ class Jpdnc_Plugin {
 
 		// custom fix.
 		$this->loader->add_action( 'init', $this, 'fix_ninja_forms_loading' );
+
+		// Disable comments in public/frontend/REST.
+		$this->loader->add_filter( 'comments_open', $plugin_public, 'filter_comments_closed', 20 );
+		$this->loader->add_filter( 'pings_open', $plugin_public, 'filter_comments_closed', 20 );
+		$this->loader->add_filter( 'comments_array', $plugin_public, 'filter_empty_comments_array', 10 );
+		$this->loader->add_filter( 'rest_endpoints', $plugin_public, 'disable_comments_rest_api' );
 
 	}
 
@@ -235,6 +247,7 @@ class Jpdnc_Plugin {
 	 */
 	public function register_cli_commands() {
 		WP_CLI::add_command( 'jpndc fix-forms', [ $this, 'cli_fix_forms' ] );
+		WP_CLI::add_command( 'jpndc purge-comments', [ $this, 'cli_purge_comments' ] );
 	}
 
 	/**
@@ -254,10 +267,24 @@ class Jpdnc_Plugin {
 	}
 
 	/**
+	 * Purges all comments via CLI.
+	 *
+	 * @param array $args       Command arguments.
+	 * @param array $assoc_args Command flags.
+	 * @return void
+	 */
+	public function cli_purge_comments( $args, $assoc_args ) {
+		require_once plugin_dir_path( __FILE__ ) . 'class-jpdnc-plugin-activator.php';
+		Jpdnc_Plugin_Activator::activate();
+		WP_CLI::success( 'All comments purged and comments disabled on all posts.' );
+	}
+
+	/**
 	 * Register the WP-CLI commands.
 	 */
 	private function define_cli_hooks() {
 		// Register the command directly.
 		\WP_CLI::add_command( 'jpndc fix-forms', [ $this, 'cli_fix_forms' ] );
+		\WP_CLI::add_command( 'jpndc purge-comments', [ $this, 'cli_purge_comments' ] );
 	}
 }
