@@ -1,9 +1,0 @@
-remove/ Disable Comments:
-wp post list --format=ids | xargs wp post update --comment_status=closed
-wp option update default_comment_status closed
-# Disable pingbacks and trackbacks on new posts
-wp option update default_ping_status closed
-# Disable the "Allow people to submit comments on new posts" setting
-wp option update default_comment_status 0
-# wp db query "DELETE FROM $(wp db prefix)comments; DELETE FROM $(wp db prefix)commentmeta;"
-
