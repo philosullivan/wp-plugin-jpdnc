@@ -189,6 +189,10 @@ class Jpdnc_Plugin {
 		$this->loader->add_filter( 'comments_array', $plugin_public, 'filter_empty_comments_array', 10 );
 		$this->loader->add_filter( 'rest_endpoints', $plugin_public, 'disable_comments_rest_api' );
 
+		// Show hero on password protected pages.
+		$this->loader->add_filter( 'the_content', $plugin_public, 'show_hero_on_password_protected_page', 1 );
+		$this->loader->add_filter( 'awb_should_render_page_title_bar', $plugin_public, 'show_page_title_bar_on_password_protected_page', 10, 2 );
+
 	}
 
 	/**

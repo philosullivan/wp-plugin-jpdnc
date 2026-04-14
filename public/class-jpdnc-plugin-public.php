@@ -137,4 +137,46 @@ class Jpdnc_Plugin_Public {
 		return $endpoints;
 	}
 
+	/**
+	 * Show the hero section even if the post is password protected.
+	 *
+	 * @since    1.0.0
+	 * @param    string    $content    The post content.
+	 * @return   string    Filtered content.
+	 */
+	public function show_hero_on_password_protected_page( $content ) {
+		if ( is_singular() && post_password_required() ) {
+			$post = get_post();
+			if ( strpos( $post->post_content, 'fusion_builder_container' ) !== false ) {
+				// Extract the hero section from the original content
+				$original_content = $post->post_content;
+
+				// Try to find the container with admin_label="Hero Section"
+				if ( preg_match( '/\[fusion_builder_container admin_label="Hero Section".*?\[\/fusion_builder_container\]/s', $original_content, $matches ) ) {
+					$hero = $matches[0];
+					// Render the hero shortcode
+					$rendered_hero = do_shortcode( $hero );
+					// Prepend it to the password form (which is what $content currently is)
+					return $rendered_hero . $content;
+				}
+			}
+		}
+		return $content;
+	}
+
+	/**
+	 * Ensure page title bar is visible on password protected pages.
+	 *
+	 * @since    1.0.0
+	 * @param    bool      $render     Whether to render or not.
+	 * @param    int       $post_id    The post ID.
+	 * @return   bool      Filtered render value.
+	 */
+	public function show_page_title_bar_on_password_protected_page( $render, $post_id ) {
+		if ( post_password_required( $post_id ) ) {
+			return true;
+		}
+		return $render;
+	}
+
 }
