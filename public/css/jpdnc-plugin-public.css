@@ -1,0 +1,21 @@
+
+/* Custom styles for Early Education page toggles */
+.page-id-21615 .accordian.fusion-accordian {
+    --awb-title-color: #70566D !important;
+    --awb-icon-color: #70566D !important;
+    --awb-toggle-hover-accent-color: var(--awb-color4, #fec96b) !important;
+}
+
+/* Ensure the heading text also changes color on hover */
+.page-id-21615 .accordian.fusion-accordian .panel-title a:hover .fusion-toggle-heading {
+    color: var(--awb-color4, #fec96b) !important;
+}
+
+/* Target the icon specifically if needed */
+.page-id-21615 .accordian.fusion-accordian .fusion-toggle-icon-wrapper i {
+    color: #70566D !important;
+}
+
+.page-id-21615 .accordian.fusion-accordian .panel-title a:hover .fusion-toggle-icon-wrapper i {
+    color: var(--awb-color4, #fec96b) !important;
+}
