@@ -21,12 +21,6 @@
  * @subpackage Jpdnc_Plugin/includes
  * @author     JPDNC <https://jpdnc.org>
  */
-/**
- * Register all actions and filters for the plugin.
- */
-/**
- * Register all actions and filters for the plugin.
- */
 class Jpdnc_Plugin_Loader {
 
 	/**
@@ -42,6 +36,13 @@ class Jpdnc_Plugin_Loader {
 	 * @var array $filters The filters registered with WordPress to run when the loader is run.
 	 */
 	protected $filters = [];
+
+	/**
+	 * The array of shortcodes registered with WordPress.
+	 *
+	 * @var array $shortcodes The shortcodes registered with WordPress to run when the loader is run.
+	 */
+	protected $shortcodes = [];
 
 	/**
 	 * Initialize the collections used to maintain the actions and filters.
@@ -66,6 +67,19 @@ class Jpdnc_Plugin_Loader {
 	 */
 	public function add_filter( $hook, $component, $callback, $priority = 10, $accepted_args = 1 ) {
 		$this->filters = $this->add( $this->filters, $hook, $component, $callback, $priority, $accepted_args );
+	}
+
+	/**
+	 * Add a new shortcode to the collection to be registered with WordPress.
+	 *
+	 * @access public
+	 */
+	public function add_shortcode( $tag, $component, $callback ) {
+		$this->shortcodes[] = [
+			'tag'       => $tag,
+			'component' => $component,
+			'callback'  => $callback,
+		];
 	}
 
 	/**
@@ -97,6 +111,10 @@ class Jpdnc_Plugin_Loader {
 
 		foreach ( $this->actions as $hook ) {
 			add_action( $hook['hook'], [ $hook['component'], $hook['callback'] ], $hook['priority'], $hook['accepted_args'] );
+		}
+
+		foreach ( $this->shortcodes as $shortcode ) {
+			add_shortcode( $shortcode['tag'], [ $shortcode['component'], $shortcode['callback'] ] );
 		}
 	}
 }

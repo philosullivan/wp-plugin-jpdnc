@@ -75,6 +75,7 @@ class Jpdnc_Plugin {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->define_shortcode_hooks();
 
 		// Add this block here:
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
@@ -193,6 +194,15 @@ class Jpdnc_Plugin {
 		$this->loader->add_filter( 'the_content', $plugin_public, 'show_hero_on_password_protected_page', 1 );
 		$this->loader->add_filter( 'awb_should_render_page_title_bar', $plugin_public, 'show_page_title_bar_on_password_protected_page', 10, 2 );
 
+	}
+
+	/**
+	 * Register shortcodes.
+	 */
+	private function define_shortcode_hooks() {
+		$plugin_public = new Jpdnc_Plugin_Public( $this->get_plugin_name(), $this->get_version() );
+		$this->loader->add_shortcode( 'jpndc_staff_grid', $plugin_public, 'render_staff_grid' );
+		$this->loader->add_shortcode( 'jpndc_full_staff_directory', $plugin_public, 'render_full_staff_directory' );
 	}
 
 	/**

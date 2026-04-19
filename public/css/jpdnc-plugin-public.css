@@ -19,3 +19,53 @@
 .page-id-21615 .accordian.fusion-accordian .panel-title a:hover .fusion-toggle-icon-wrapper i {
     color: var(--awb-color4, #fec96b) !important;
 }
+
+/* Dynamic Staff Grid Styles */
+.staff-card-col {
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+    cursor: pointer;
+    margin-bottom: 10px !important;
+    background-color: transparent !important;
+}
+.staff-card-col .fusion-column-wrapper {
+    background-color: #70566d !important;
+    padding: 30px !important;
+    border-radius: 12px !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    transition: all 0.4s ease !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    color: #ffffff !important;
+}
+.staff-card-col h3, 
+.staff-card-col p, 
+.staff-card-col span, 
+.staff-card-col div {
+    color: #ffffff !important;
+}
+.staff-card-col:hover .fusion-column-wrapper {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 45px rgba(0,0,0,0.3) !important;
+}
+.staff-card-col img {
+    transition: transform 0.6s ease;
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.staff-card-col:hover img {
+    transform: scale(1.05);
+}
+#staff-search {
+    border: 2px solid #70566d;
+    border-radius: 30px;
+    padding: 15px 25px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 50px auto;
+    display: block;
+    font-size: 18px;
+}
