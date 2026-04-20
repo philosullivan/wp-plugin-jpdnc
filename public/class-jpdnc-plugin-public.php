@@ -260,9 +260,28 @@ class Jpdnc_Plugin_Public {
 	 * @return string Rendered HTML.
 	 */
 	public function render_full_staff_directory() {
-		$parent_cat = get_category_by_slug( 'jpndc-staff' );
+		return $this->render_directory_by_parent( 'jpndc-staff' );
+	}
+
+	/**
+	 * Shortcode to render the full people directory by subcategories of People of JPNDC.
+	 *
+	 * @return string Rendered HTML.
+	 */
+	public function render_people_directory() {
+		return $this->render_directory_by_parent( 'people-of-jpndc' );
+	}
+
+	/**
+	 * Helper to render a directory grouped by subcategories of a parent.
+	 *
+	 * @param string $parent_slug Slug of the parent category.
+	 * @return string Rendered HTML.
+	 */
+	private function render_directory_by_parent( $parent_slug ) {
+		$parent_cat = get_category_by_slug( $parent_slug );
 		if ( ! $parent_cat ) {
-			return 'Parent category "JPNDC Staff" not found.';
+			return 'Parent category "' . esc_html( $parent_slug ) . '" not found.';
 		}
 
 		$sub_categories = get_categories( array(

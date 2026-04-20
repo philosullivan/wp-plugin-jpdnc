@@ -203,6 +203,7 @@ class Jpdnc_Plugin {
 		$plugin_public = new Jpdnc_Plugin_Public( $this->get_plugin_name(), $this->get_version() );
 		$this->loader->add_shortcode( 'jpndc_staff_grid', $plugin_public, 'render_staff_grid' );
 		$this->loader->add_shortcode( 'jpndc_full_staff_directory', $plugin_public, 'render_full_staff_directory' );
+		$this->loader->add_shortcode( 'jpndc_people_directory', $plugin_public, 'render_people_directory' );
 	}
 
 	/**
