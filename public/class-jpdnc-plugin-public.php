@@ -3,16 +3,6 @@
 /**
  * The public-facing functionality of the plugin.
  *
- * @link       https://jpdnc.org
- * @since      1.0.0
- *
- * @package    Jpdnc_Plugin
- * @subpackage Jpdnc_Plugin/public
- */
-
-/**
- * The public-facing functionality of the plugin.
- *
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the public-facing stylesheet and JavaScript.
  *
