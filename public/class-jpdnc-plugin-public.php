@@ -231,7 +231,10 @@ class Jpdnc_Plugin_Public {
 				
 				$thumb_url = get_the_post_thumbnail_url( $post_id, 'full' );
 				if ( ! $thumb_url ) {
-					$thumb_url = 'http://localhost:10009/wp-content/uploads/2024/09/Untitled-design.png'; // Placeholder
+					$thumb_url = wp_get_attachment_url( 31836 ); // Use the verified placeholder image ID
+					if ( ! $thumb_url ) {
+						$thumb_url = 'http://localhost:10009/wp-content/uploads/2024/09/Untitled-design.png'; // Hardcoded fallback
+					}
 				}
 
 				$output .= sprintf(
