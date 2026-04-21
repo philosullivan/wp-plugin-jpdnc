@@ -177,7 +177,8 @@ class Jpdnc_Plugin_Public {
 	 */
 	public function render_staff_grid( $atts ) {
 		$atts = shortcode_atts( array(
-			'category' => '', // Category slug(s), comma separated
+			'category'   => '', // Category slug(s), comma separated
+			'show_title' => 'yes', // Whether to show the staff title/role
 		), $atts, 'jpndc_staff_grid' );
 
 		if ( empty( $atts['category'] ) ) {
@@ -212,11 +213,46 @@ class Jpdnc_Plugin_Public {
 				$post_id = get_the_ID();
 				$title = get_the_title();
 				$permalink = get_permalink();
+				$content = get_post_field( 'post_content', $post_id );
 				
-				// Try to get a job title from custom fields or content
-				$job_title = get_post_meta( $post_id, 'job_title', true );
-				if ( ! $job_title ) {
-					$job_title = get_post_meta( $post_id, 'title', true );
+				$job_title = '';
+				if ( 'yes' === $atts['show_title'] ) {
+					// Try to get a job title from custom fields or content
+					$job_title = get_post_meta( $post_id, 'job_title', true );
+					if ( ! $job_title ) {
+						$job_title = get_post_meta( $post_id, 'title', true );
+					}
+					
+					// Fallback to SEO title if it contains something specific
+					if ( ! $job_title ) {
+						$seo_title = get_post_meta( $post_id, '_aioseop_title', true );
+						if ( $seo_title && strpos( $seo_title, 'Meet' ) === false ) {
+							$job_title = $seo_title;
+						}
+					}
+
+					// If still empty, try to parse it from the content
+					if ( ! $job_title ) {
+						// Remove [fusion_title] shortcodes as they can contain the name and confuse the parser
+						$content_clean = preg_replace( '/\[fusion_title.*?\](.*?)\[\/fusion_title\]/is', '', $content );
+						
+						// 1. Try "Title:" or "Position:" or "Board position:" labels
+						if ( preg_match( '/(?:Title|Position|Board position)[:\s]+(.*?)(?:<\/p>|<br|\[\/fusion_text\])/is', $content_clean, $matches ) ) {
+							$job_title = trim( strip_tags( $matches[1] ) );
+						} 
+						// 2. Try the first <em> or <strong> tag if it's very early in the content
+						elseif ( preg_match( '/(?:<p>|\[fusion_text\])\s*(?:<em>|<strong>)(.*?)(?:<\/em>|<\/strong>)/is', substr($content_clean, 0, 300), $matches ) ) {
+							$job_title = trim( strip_tags( $matches[1] ) );
+						}
+						// 3. Fallback: Take the first line of text if it's short (under 70 chars)
+						else {
+							$first_line = trim( strip_tags( $content_clean ) );
+							$first_line = strtok( $first_line, "\n\r" );
+							if ( strlen( $first_line ) > 0 && strlen( $first_line ) < 70 ) {
+								$job_title = $first_line;
+							}
+						}
+					}
 				}
 				
 				$thumb_url = get_the_post_thumbnail_url( $post_id, 'full' );
@@ -227,13 +263,15 @@ class Jpdnc_Plugin_Public {
 					}
 				}
 
+				$title_html = ! empty( $job_title ) ? sprintf( '<p class="staff-title">%s</p>', esc_html( $job_title ) ) : '';
+
 				$output .= sprintf(
-					'[fusion_builder_column_inner align_self="stretch" spacing="4%%" type="1_3" layout="1_3" class="staff-card-col" link="%s" center_content="no" hover_type="none" background_color="" background_image="" background_position="left top" background_repeat="no-repeat" border_size="0" border_color="" border_style="solid" padding="" margin_top="" margin_bottom="10px" animation_type="" animation_direction="left" animation_speed="0.3" animation_offset="" id="" min_height=""]<img src="%s" alt="%s"><h3>%s</h3><p>%s</p>[/fusion_builder_column_inner]',
+					'[fusion_builder_column_inner align_self="stretch" spacing="4%%" type="1_3" layout="1_3" class="staff-card-col" link="%s" center_content="no" hover_type="none" background_color="" background_image="" background_position="left top" background_repeat="no-repeat" border_size="0" border_color="" border_style="solid" padding="" margin_top="" margin_bottom="10px" animation_type="" animation_direction="left" animation_speed="0.3" animation_offset="" id="" min_height=""]<img src="%s" alt="%s"><h3>%s</h3>%s[/fusion_builder_column_inner]',
 					esc_url( $permalink ),
 					esc_url( $thumb_url ),
 					esc_attr( $title ),
 					esc_html( $title ),
-					esc_html( $job_title )
+					$title_html
 				);
 			}
 			
@@ -250,25 +288,26 @@ class Jpdnc_Plugin_Public {
 	 * @return string Rendered HTML.
 	 */
 	public function render_full_staff_directory() {
-		return $this->render_directory_by_parent( 'jpndc-staff' );
+		return $this->render_directory_by_parent( 'jpndc-staff', 'yes' );
 	}
 
 	/**
-	 * Shortcode to render the full people directory by subcategories of People of JPNDC.
+	 * Shortcode to render the full people directory by subcategories of JPNDC Clients.
 	 *
 	 * @return string Rendered HTML.
 	 */
 	public function render_people_directory() {
-		return $this->render_directory_by_parent( 'people-of-jpndc' );
+		return $this->render_directory_by_parent( 'jpndc-clients', 'no' );
 	}
 
 	/**
 	 * Helper to render a directory grouped by subcategories of a parent.
 	 *
 	 * @param string $parent_slug Slug of the parent category.
+	 * @param string $show_title  Whether to show staff titles.
 	 * @return string Rendered HTML.
 	 */
-	private function render_directory_by_parent( $parent_slug ) {
+	private function render_directory_by_parent( $parent_slug, $show_title = 'yes' ) {
 		$parent_cat = get_category_by_slug( $parent_slug );
 		if ( ! $parent_cat ) {
 			return 'Parent category "' . esc_html( $parent_slug ) . '" not found.';
@@ -281,10 +320,63 @@ class Jpdnc_Plugin_Public {
 			'order'      => 'ASC',
 		) );
 
+		// Custom sort for JPNDC Staff
+		if ( 'jpndc-staff' === $parent_slug ) {
+			$custom_order = array(
+				'senior-management',
+				'affordable-housing-jpndc-staff',
+				'early-education',
+				'family-proserity-services',
+				'small-buisness-services',
+				'community-organizing',
+				'fundraising-communication',
+				'the-brewery',
+				'operations',
+				'finance',
+				'officers',
+				'members',
+			);
+
+			usort( $sub_categories, function( $a, $b ) use ( $custom_order ) {
+				$pos_a = array_search( $a->slug, $custom_order );
+				$pos_b = array_search( $b->slug, $custom_order );
+
+				if ( false === $pos_a && false === $pos_b ) {
+					return strcmp( $a->name, $b->name );
+				}
+				if ( false === $pos_a ) {
+					return 1;
+				}
+				if ( false === $pos_b ) {
+					return -1;
+				}
+
+				return $pos_a - $pos_b;
+			} );
+		}
+
 		$output = '';
 
 		foreach ( $sub_categories as $sub_cat ) {
-			$grid = $this->render_staff_grid( array( 'category' => $sub_cat->slug ) );
+			$cat_name = $sub_cat->name;
+			$cat_slug = $sub_cat->slug;
+
+			// Special case: Combine Officers and Members for JPNDC Staff
+			if ( 'jpndc-staff' === $parent_slug ) {
+				if ( 'members' === $cat_slug ) {
+					continue; // Skip members, they will be included with officers
+				}
+				if ( 'officers' === $cat_slug ) {
+					$cat_name = 'Board & Members';
+					$cat_slug = 'officers,members'; // render_staff_grid handles comma-separated slugs
+				}
+			}
+
+			$grid = $this->render_staff_grid( array( 
+				'category'   => $cat_slug,
+				'show_title' => $show_title 
+			) );
+			
 			if ( empty( $grid ) ) {
 				continue;
 			}
@@ -298,7 +390,7 @@ class Jpdnc_Plugin_Public {
 				    [/fusion_builder_column]
 				  [/fusion_builder_row]
 				[/fusion_builder_container]',
-				esc_html( $sub_cat->name ),
+				esc_html( $cat_name ),
 				$grid
 			);
 		}

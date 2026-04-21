@@ -1,25 +1,3 @@
-
-/* Custom styles for Early Education page toggles */
-.page-id-21615 .accordian.fusion-accordian {
-    --awb-title-color: #70566D !important;
-    --awb-icon-color: #70566D !important;
-    --awb-toggle-hover-accent-color: var(--awb-color4, #fec96b) !important;
-}
-
-/* Ensure the heading text also changes color on hover */
-.page-id-21615 .accordian.fusion-accordian .panel-title a:hover .fusion-toggle-heading {
-    color: var(--awb-color4, #fec96b) !important;
-}
-
-/* Target the icon specifically if needed */
-.page-id-21615 .accordian.fusion-accordian .fusion-toggle-icon-wrapper i {
-    color: #70566D !important;
-}
-
-.page-id-21615 .accordian.fusion-accordian .panel-title a:hover .fusion-toggle-icon-wrapper i {
-    color: var(--awb-color4, #fec96b) !important;
-}
-
 /* Dynamic Staff Grid Styles */
 .staff-card-col {
     transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
@@ -28,7 +6,7 @@
     background-color: transparent !important;
 }
 .staff-card-col .fusion-column-wrapper {
-    background-color: #70566d !important;
+    /*background-color: #70566d !important;*/
     padding: 30px !important;
     border-radius: 12px !important;
     height: 100% !important;
@@ -36,13 +14,13 @@
     flex-direction: column !important;
     transition: all 0.4s ease !important;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
-    color: #ffffff !important;
+    color: #0b0909 !important;
 }
 .staff-card-col h3, 
 .staff-card-col p, 
 .staff-card-col span, 
 .staff-card-col div {
-    color: #ffffff !important;
+    color: #0b0909 !important;
 }
 .staff-card-col:hover .fusion-column-wrapper {
     transform: translateY(-10px);
