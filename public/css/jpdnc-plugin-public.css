@@ -1,6 +1,6 @@
 /* Dynamic Staff Grid Styles */
 .staff-card-col {
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
     cursor: pointer;
     margin-bottom: 10px !important;
     background-color: transparent !important;
@@ -12,7 +12,7 @@
     height: 100% !important;
     display: flex !important;
     flex-direction: column !important;
-    transition: all 0.4s ease !important;
+    transition: transform 0.4s ease, box-shadow 0.4s ease !important;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
     color: #0b0909 !important;
 }
@@ -36,6 +36,33 @@
 }
 .staff-card-col:hover img {
     transform: scale(1.05);
+}
+
+/* Custom Zoom-In effect for Columns with Color Backgrounds */
+.fusion-image-hovers .hover-type-zoomin {
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+    backface-visibility: hidden;
+}
+
+.fusion-image-hovers .hover-type-zoomin:hover {
+    transform: scale(1.03) !important;
+    z-index: 10;
+    opacity: 1 !important;
+}
+
+/* Remove Avada default hover overlay/opacity change */
+.fusion-image-hovers .hover-type-zoomin:hover .fusion-column-inner-bg-image,
+.fusion-image-hovers .hover-type-zoomin:hover img,
+.fusion-image-hovers .hover-type-zoomin:hover .fusion-column-wrapper {
+    opacity: 1 !important;
+}
+
+.fusion-image-hovers .hover-type-zoomin .fusion-column-wrapper {
+    transition: box-shadow 0.4s ease !important;
+}
+
+.fusion-image-hovers .hover-type-zoomin:hover .fusion-column-wrapper {
+    box-shadow: 0 15px 45px rgba(0,0,0,0.2) !important;
 }
 #staff-search {
     border: 2px solid #70566d;
