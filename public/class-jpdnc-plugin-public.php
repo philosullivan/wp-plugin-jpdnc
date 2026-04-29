@@ -307,95 +307,135 @@ class Jpdnc_Plugin_Public {
 	 * @param string $show_title  Whether to show staff titles.
 	 * @return string Rendered HTML.
 	 */
-	private function render_directory_by_parent( $parent_slug, $show_title = 'yes' ) {
-		$parent_cat = get_category_by_slug( $parent_slug );
-		if ( ! $parent_cat ) {
-			return 'Parent category "' . esc_html( $parent_slug ) . '" not found.';
+	public function render_directory_by_parent( $parent_slug, $show_title ) {
+		$parent = get_term_by( 'slug', $parent_slug, 'category' );
+		if ( ! $parent ) {
+			return sprintf( 'Category "%s" not found.', esc_html( $parent_slug ) );
 		}
 
-		$sub_categories = get_categories( array(
-			'parent'     => $parent_cat->term_id,
-			'hide_empty' => 1,
-			'orderby'    => 'name',
-			'order'      => 'ASC',
+		$subcats = get_terms( array(
+			'taxonomy' => 'category',
+			'parent'   => $parent->term_id,
+			'orderby'  => 'description', // Use description field for ordering if numeric
+			'order'    => 'ASC',
+			'hide_empty' => true,
 		) );
 
-		// Custom sort for JPNDC Staff
-		if ( 'jpndc-staff' === $parent_slug ) {
-			$custom_order = array(
-				'senior-management',
-				'affordable-housing-jpndc-staff',
-				'early-education',
-				'family-proserity-services',
-				'small-buisness-services',
-				'community-organizing',
-				'fundraising-communication',
-				'the-brewery',
-				'operations',
-				'finance',
-				'officers',
-				'members',
-			);
-
-			usort( $sub_categories, function( $a, $b ) use ( $custom_order ) {
-				$pos_a = array_search( $a->slug, $custom_order );
-				$pos_b = array_search( $b->slug, $custom_order );
-
-				if ( false === $pos_a && false === $pos_b ) {
-					return strcmp( $a->name, $b->name );
-				}
-				if ( false === $pos_a ) {
-					return 1;
-				}
-				if ( false === $pos_b ) {
-					return -1;
-				}
-
-				return $pos_a - $pos_b;
-			} );
+		if ( is_wp_error( $subcats ) || empty( $subcats ) ) {
+			// If no subcategories, just render the parent category itself
+			$grid = $this->render_staff_grid( array( 'category' => $parent_slug, 'show_title' => $show_title ) );
+			return do_shortcode( $grid );
 		}
 
 		$output = '';
-
-		foreach ( $sub_categories as $sub_cat ) {
-			$cat_name = $sub_cat->name;
-			$cat_slug = $sub_cat->slug;
-
-			// Special case: Combine Officers and Members for JPNDC Staff
-			if ( 'jpndc-staff' === $parent_slug ) {
-				if ( 'members' === $cat_slug ) {
-					continue; // Skip members, they will be included with officers
-				}
-				if ( 'officers' === $cat_slug ) {
-					$cat_name = 'Board & Members';
-					$cat_slug = 'officers,members'; // render_staff_grid handles comma-separated slugs
-				}
-			}
-
-			$grid = $this->render_staff_grid( array( 
-				'category'   => $cat_slug,
-				'show_title' => $show_title 
-			) );
-			
-			if ( empty( $grid ) ) {
-				continue;
-			}
+		foreach ( $subcats as $cat ) {
+			$grid = $this->render_staff_grid( array( 'category' => $cat->slug, 'show_title' => $show_title ) );
+			if ( empty( $grid ) ) continue;
 
 			$output .= sprintf(
-				'[fusion_builder_container class="staff-cat-row" hundred_percent="no" hide_on_mobile="no" background_position="left top" background_repeat="no-repeat" fade="no" background_parallax="none" enable_mobile="no" parallax_speed="0.3" video_aspect_ratio="16:9" video_loop="yes" video_mute="yes" border_size="0px" border_style="solid" padding_top="20" padding_bottom="20"]
-				  [fusion_builder_row]
-				    [fusion_builder_column type="1_1" layout="1_1" background_position="left top" background_color="" border_size="" border_color="" border_style="solid" background_image="" background_repeat="no-repeat" padding="" margin_top="" margin_bottom="10px" animation_type="" animation_direction="left" animation_speed="0.3" animation_offset="" class="" id="" min_height=""]
-				      [fusion_title size="2" content_align="left" style_type="single solid" sep_color="" margin_top="" margin_bottom="10px" class="" id=""]%s[/fusion_title]
-				      %s
-				    [/fusion_builder_column]
-				  [/fusion_builder_row]
-				[/fusion_builder_container]',
-				esc_html( $cat_name ),
+				'[fusion_builder_container type="flex" hundred_percent="no" equal_height_columns="no" menu_anchor="" hide_on_mobile="small-visibility,medium-visibility,large-visibility" class="staff-cat-row" id="" background_color="" background_image="" background_position="center center" background_repeat="no-repeat" fade="no" background_parallax="none" parallax_speed="0.3" video_mp4="" video_webm="" video_ogv="" video_url="" video_aspect_ratio="16:9" video_loop="yes" video_mute="yes" overlay_color="" video_preview_image="" border_color="" border_style="solid" padding_top="40px" padding_bottom="20px" padding_left="" padding_right=""][fusion_builder_row][fusion_builder_column type="1_1" layout="1_1" background_position="left top" background_color="" border_color="" border_style="solid" border_position="all" spacing="yes" background_image="" background_repeat="no-repeat" padding_top="" padding_right="" padding_bottom="" padding_left="" margin_top="0px" margin_bottom="0px" class="" id="" animation_type="" animation_speed="0.3" animation_direction="left" hide_on_mobile="small-visibility,medium-visibility,large-visibility" center_content="no" last="true" min_height="" hover_type="none" link="" first="true"][fusion_title size="2" content_align="left" style_type="default" sep_color="" margin_top="" margin_bottom="" class="" id=""]%s[/fusion_title]%s[/fusion_builder_column][/fusion_builder_row][/fusion_builder_container]',
+				esc_html( $cat->name ),
 				$grid
 			);
 		}
 
 		return do_shortcode( $output );
+	}
+	/**
+	 * Shortcode to render the childcare provider directory from CSV.
+	 *
+	 * @return string Rendered HTML.
+	 */
+	public function render_childcare_directory() {
+		$csv_path = WP_CONTENT_DIR . '/Family Childcare Provider Profiles(Sheet1).csv';
+		if ( ! file_exists( $csv_path ) ) {
+			return 'CSV file not found.';
+		}
+
+		$file = fopen($csv_path, 'r');
+		$header = fgetcsv($file);
+		$data = [];
+		while (($row = fgetcsv($file)) !== FALSE) {
+			if (count($row) < 7) continue;
+			$data[] = array_combine($header, $row);
+		}
+		fclose($file);
+
+		// Extract unique cities for filtering
+		$cities = array_unique(array_column($data, 'NAME OF CITY OR TOWN'));
+		asort($cities);
+
+		$output = '<div class="childcare-filter-container" style="margin-bottom: 30px; display: flex; gap: 20px; flex-wrap: wrap;">';
+		$output .= '<input id="provider-search" type="text" placeholder="Search by name or language..." style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" />';
+		$output .= '<select id="city-filter" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">';
+		$output .= '<option value="">All Cities</option>';
+		foreach ($cities as $city) {
+			if (empty(trim($city))) continue;
+			$output .= sprintf('<option value="%s">%s</option>', esc_attr($city), esc_html($city));
+		}
+		$output .= '</select>';
+		$output .= '</div>';
+
+		$output .= '<div id="childcare-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;">';
+
+		foreach ($data as $row) {
+			$name = $row['NAME OF EDUCATOR'];
+			$business = $row['NAME OF CHILDCARE'];
+			$city = $row['NAME OF CITY OR TOWN'];
+			$languages = $row['ALL LANGUAGES YOU SPEAK'];
+			$experience = $row['NUMBER OF YEARS OF EXPERIENCE'];
+			$children = $row['NUMBER OF CHILDREN'];
+			
+			$output .= sprintf(
+				'<div class="provider-card" data-city="%s" style="background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: transform 0.3s ease;">
+					<div style="padding: 25px;">
+						<h3 style="margin: 0 0 10px 0; color: #014153; font-family: Montserrat, sans-serif; font-size: 20px;">%s</h3>
+						<p style="margin: 0 0 15px 0; color: #6EB440; font-weight: 700; font-family: Figtree, sans-serif;">%s</p>
+						<div style="font-size: 14px; color: #555; font-family: Figtree, sans-serif;">
+							<p style="margin: 5px 0;"><strong>City:</strong> %s</p>
+							<p style="margin: 5px 0;"><strong>Languages:</strong> %s</p>
+							<p style="margin: 5px 0;"><strong>Experience:</strong> %s years</p>
+							<p style="margin: 5px 0;"><strong>Capacity:</strong> %s children</p>
+						</div>
+					</div>
+				</div>',
+				esc_attr($city),
+				esc_html($name),
+				esc_html($business),
+				esc_html($city),
+				esc_html($languages),
+				esc_html($experience),
+				esc_html($children)
+			);
+		}
+
+		$output .= '</div>';
+
+		// Filtering Script
+		$output .= '
+		<script>
+		jQuery(document).ready(function($){
+			function filterProviders() {
+				var searchVal = $("#provider-search").val().toLowerCase().trim();
+				var cityVal = $("#city-filter").val().toLowerCase();
+
+				$(".provider-card").each(function(){
+					var cardText = $(this).text().toLowerCase();
+					var cardCity = $(this).data("city").toLowerCase();
+					
+					var matchesSearch = cardText.indexOf(searchVal) > -1;
+					var matchesCity = cityVal === "" || cardCity === cityVal;
+					
+					$(this).toggle(matchesSearch && matchesCity);
+				});
+			}
+
+			$("#provider-search").on("input", filterProviders);
+			$("#city-filter").on("change", filterProviders);
+		});
+		</script>';
+
+		return $output;
 	}
 
 }

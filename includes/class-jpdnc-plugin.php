@@ -204,6 +204,7 @@ class Jpdnc_Plugin {
 		$this->loader->add_shortcode( 'jpndc_staff_grid', $plugin_public, 'render_staff_grid' );
 		$this->loader->add_shortcode( 'jpndc_full_staff_directory', $plugin_public, 'render_full_staff_directory' );
 		$this->loader->add_shortcode( 'jpndc_people_directory', $plugin_public, 'render_people_directory' );
+		$this->loader->add_shortcode( 'jpndc_childcare_directory', $plugin_public, 'render_childcare_directory' );
 	}
 
 	/**
